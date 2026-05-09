@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ThohirZy | Ultimate Number Tracker</title>
+  <!-- Google Fonts + Font Awesome 6 -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 10% 20%, #0B1120, #030617);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    /* efek bintang/glow */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    .track-card {
+      max-width: 620px;
+      width: 100%;
+      background: rgba(15, 25, 45, 0.75);
+      backdrop-filter: blur(14px);
+      border-radius: 2.5rem;
+      border: 1px solid rgba(0, 230, 255, 0.35);
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 255, 255, 0.15) inset;
+      padding: 2rem 1.8rem;
+      transition: all 0.25s;
+      z-index: 2;
+    }
+
+    /* header developer */
+    .dev-area {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 1.8rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(0, 230, 255, 0.3);
+    }
+    .dev-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .dev-avatar {
+      background: linear-gradient(145deg, #00a6ff, #004e9e);
+      width: 54px;
+      height: 54px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 6px 14px rgba(0, 150, 255, 0.3);
+    }
+    .dev-name h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(120deg, #ffffff, #7bc5ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .dev-name p {
+      font-size: 0.7rem;
+      color: #8aa7d4;
+      letter-spacing: 0.3px;
+    }
+    .version-badge {
+      background: rgba(0, 200, 255, 0.2);
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: #7effe0;
+      border: 1px solid #4effd5;
+    }
+
+    .title-section {
+      text-align: center;
+      margin: 1rem 0 1.2rem;
+    }
+    .title-section h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #E0F2FE, #7AC7FF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .subhead {
+      text-align: center;
+      color: #90a9d4;
+      font-size: 0.8rem;
+      margin-top: 6px;
+    }
+
+    /* input + button */
+    .search-box {
+      margin: 1.5rem 0 1rem;
+    }
+    .input-group-flex {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .input-icon {
+      display: flex;
+      align-items: center;
+      background: #0a101fcc;
+      border-radius: 80px;
+      border: 1px solid #2c5699;
+      transition: all 0.2s;
+    }
+    .input-icon:focus-within {
+      border-color: #3ac0ff;
+      box-shadow: 0 0 0 3px rgba(58, 192, 255, 0.2);
+    }
+    .input-icon span {
+      padding: 0 0 0 1.5rem;
+      color: #3ac0ff;
+      font-size: 1.2rem;
+    }
+    .input-icon input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 1rem 1rem 1rem 0.8rem;
+      font-size: 1rem;
+      color: white;
+      font-weight: 500;
+      outline: none;
+    }
+    .input-icon input::placeholder {
+      color: #4f628e;
+      font-weight: 400;
+    }
+
+    .track-action-btn {
+      background: linear-gradient(95deg, #0f5eff, #00b7ff);
+      border: none;
+      border-radius: 60px;
+      padding: 0.9rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 8px 20px rgba(0, 119, 255, 0.3);
+      margin-top: 0.5rem;
+    }
+    .track-action-btn:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(95deg, #2f72ff, #2ac2ff);
+      box-shadow: 0 14px 24px rgba(0, 110, 255, 0.4);
+    }
+    .track-action-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* result card */
+    .result-modern {
+      margin-top: 1.8rem;
+      background: rgba(0, 0, 0, 0.45);
+      border-radius: 1.8rem;
+      padding: 1.3rem;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0, 200, 255, 0.25);
+      transition: 0.2s;
+    }
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1rem;
+      background: rgba(0, 30, 50, 0.5);
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      width: fit-content;
+    }
+    .result-header i {
+      font-size: 1.2rem;
+      color: #2effb0;
+    }
+    .result-header span {
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: #b3dcff;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(255,255,240,0.08);
+      flex-wrap: wrap;
+    }
+    .info-label {
+      font-weight: 500;
+      color: #9bb5e8;
+      font-size: 0.85rem;
+    }
+    .info-value {
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 0.95rem;
+      text-align: right;
+      word-break: break-word;
+      max-width: 60%;
+    }
+    .error-alert {
+      background: rgba(255, 70, 40, 0.12);
+      border-left: 4px solid #ff8a60;
+      padding: 1rem;
+      border-radius: 1.2rem;
+      color: #ffbc8c;
+      text-align: center;
+    }
+    .loading-spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      padding: 1rem;
+      color: #70d6ff;
+    }
+    .footer-credit {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.7rem;
+      color: #5e78a5;
+      border-top: 1px dashed rgba(90, 180, 255, 0.3);
+      padding-top: 1rem;
+    }
+    @media (max-width: 500px) {
+      .track-card { padding: 1.5rem; }
+      .info-value { max-width: 55%; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="track-card">
+  <!-- developer: ThohirZy -->
+  <div class="dev-area">
+    <div class="dev-info">
+      <div class="dev-avatar">
+        <i class="fas fa-user-astronaut"></i>
+      </div>
+      <div class="dev-name">
+        <h3>ThohirZy</h3>
+        <p><i class="fas fa-microchip"></i> Cyber Tracker • Creator</p>
+      </div>
+    </div>
+    <div class="version-badge">
+      <i class="fas fa-satellite"></i> LIVE TRACK
+    </div>
+  </div>
+
+  <div class="title-section">
+    <h1><i class="fas fa-map-marked-alt"></i> Nomor Tracker Pro</h1>
+    <div class="subhead">Lacak operator, negara & validasi nomor — data akurat</div>
+  </div>
+
+  <div class="search-box">
+    <div class="input-group-flex">
+      <div class="input-icon">
+        <span><i class="fas fa-phone-alt"></i></span>
+        <input type="tel" id="nomorInput" placeholder="Contoh: +6281312345678 , 08123456789 , +1 234 567 8901" value="+6281312345678">
+      </div>
+      <button class="track-action-btn" id="btnLacak">
+        <i class="fas fa-location-dot"></i> Lacak Sekarang
+      </button>
+    </div>
+  </div>
+
+  <!-- result dynamic -->
+  <div id="resultArea" class="result-modern">
+    <!-- default info -->
+    <div class="result-header">
+      <i class="fas fa-chart-simple"></i>
+      <span>SIAP MELACAK</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="fas fa-hashtag"></i> Nomor target</span>
+      <span class="info-value" id="nomorTampil">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="fas fa-globe"></i> Negara asal</span>
+      <span class="info-value" id="negaraTampil">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="fas fa-building"></i> Provider / Operator</span>
+      <span class="info-value" id="operatorTampil">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label"><i class="fas fa-check-double"></i> Status & tipe</span>
+      <span class="info-value" id="statusTampil">—</span>
+    </div>
+  </div>
+  <div class="footer-credit">
+    <i class="fas fa-shield-haltered"></i> ThohirZy Tracker Engine — database operator global & realtime validasi
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ----- ENHANCED DATABASE OPERATOR & NEGARA (akurat & detail) -----
+    // Daftar prefix internasional & mapping operator super lengkap
+    
+    const prefixDatabase = [
+      // INDONESIA (62)
+      { code: "62", country: "Indonesia", flag: "🇮🇩", defaultOp: "Telkomsel / Indosat / XL / Tri" },
+      // MALAYSIA
+      { code: "60", country: "Malaysia", flag: "🇲🇾", defaultOp: "Maxis / Digi / Celcom" },
+      // SINGAPORE
+      { code: "65", country: "Singapura", flag: "🇸🇬", defaultOp: "Singtel / StarHub / M1" },
+      // THAILAND
+      { code: "66", country: "Thailand", flag: "🇹🇭", defaultOp: "AIS / DTAC / TrueMove" },
+      // VIETNAM
+      { code: "84", country: "Vietnam", flag: "🇻🇳", defaultOp: "Viettel / Vinaphone / Mobifone" },
+      // PHILIPPINES
+      { code: "63", country: "Filipina", flag: "🇵🇭", defaultOp: "Globe / Smart / Sun" },
+      // USA & CANADA
+      { code: "1", country: "Amerika Utara (US/CA)", flag: "🇺🇸🇨🇦", defaultOp: "AT&T / Verizon / T-Mobile / Rogers" },
+      // Inggris
+      { code: "44", country: "Inggris Raya", flag: "🇬🇧", defaultOp: "EE / O2 / Vodafone / Three" },
+      // Australia
+      { code: "61", country: "Australia", flag: "🇦🇺", defaultOp: "Telstra / Optus / Vodafone" },
+      // India
+      { code: "91", country: "India", flag: "🇮🇳", defaultOp: "Jio / Airtel / Vi" },
+      // Jepang
+      { code: "81", country: "Jepang", flag: "🇯🇵", defaultOp: "NTT Docomo / au / SoftBank" },
+      // Korea Selatan
+      { code: "82", country: "Korea Selatan", flag: "🇰🇷", defaultOp: "SKT / KT / LG U+" },
+      // Jerman
+      { code: "49", country: "Jerman", flag: "🇩🇪", defaultOp: "Deutsche Telekom / Vodafone / O2" },
+      // Perancis
+      { code: "33", country: "Perancis", flag: "🇫🇷", defaultOp: "Orange / SFR / Bouygues" },
+      // Brasil
+      { code: "55", country: "Brasil", flag: "🇧🇷", defaultOp: "Vivo / Claro / TIM" },
+      // Russia
+      { code: "7", country: "Rusia", flag: "🇷🇺", defaultOp: "MTS / Beeline / MegaFon" },
+      // China
+      { code: "86", country: "China", flag: "🇨🇳", defaultOp: "China Mobile / China Unicom / China Telecom" },
+      // Pakistan
+      { code: "92", country: "Pakistan", flag: "🇵🇰", defaultOp: "Jazz / Zong / Telenor" },
+      // Bangladesh
+      { code: "880", country: "Bangladesh", flag: "🇧🇩", defaultOp: "Grameenphone / Robi / Banglalink" },
+      // Nigeria
+      { code: "234", country: "Nigeria", flag: "🇳🇬", defaultOp: "MTN / Glo / Airtel" },
+      // South Africa
+      { code: "27", country: "Afrika Selatan", flag: "🇿🇦", defaultOp: "Vodacom / MTN / Telkom" },
+      // default fallback
+      { code: "other", country: "Internasional (umum)", flag: "🌍", defaultOp: "Operator regional / roaming" }
+    ];
+    
+    // Fungsi untuk mendapatkan operator spesifik Indonesia (presisi)
+    function getDetailedIndonesianOperator(nomorClean) {
+      // nomorClean sudah berupa string tanpa +62 atau tanpa 0
+      let n = nomorClean;
+      if (n.startsWith("62")) n = n.substring(2);
+      if (n.startsWith("0")) n = n.substring(1);
+      if (n.length < 4) return "Operator Indonesia";
+      const prefix4 = n.substring(0,4);
+      const prefix3 = n.substring(0,3);
+      
+      // mapping akurat berdasarkan data industri
+      if (prefix4 === "0811" || prefix4 === "0812" || prefix4 === "0813" || prefix4 === "0821" || prefix4 === "0822" || prefix4 === "0823" || prefix4 === "0851" || prefix4 === "0852" || prefix4 === "0853" || prefix3 === "081" && (n[3] === '1'||n[3]==='2'||n[3]==='3')) return "Telkomsel";
+      if (prefix4 === "0814" || prefix4 === "0815" || prefix4 === "0816" || prefix4 === "0855" || prefix4 === "0856" || prefix4 === "0857" || prefix4 === "0858" || prefix4 === "0859") return "Indosat Ooredoo";
+      if (prefix4 === "0817" || prefix4 === "0818" || prefix4 === "0819" || prefix4 === "0859" || prefix4 === "0877" || prefix4 === "0878" || prefix4 === "0879") return "XL Axiata";
+      if (prefix4 === "0895" || prefix4 === "0896" || prefix4 === "0897" || prefix4 === "0898" || prefix4 === "0899") return "Tri (3)";
+      if (prefix4 === "0881" || prefix4 === "0882" || prefix4 === "0883" || prefix4 === "0884" || prefix4 === "0885" || prefix4 === "0886" || prefix4 === "0887" || prefix4 === "0888" || prefix4 === "0889") return "Smartfren";
+      if (prefix4 === "0831" || prefix4 === "0832" || prefix4 === "0833" || prefix4 === "0834" || prefix4 === "0835" || prefix4 === "0836" || prefix4 === "0837" || prefix4 === "0838") return "Axis";
+      if (prefix3 === "082" && (n[3] >= '4' && n[3] <= '9')) return "Telkomsel (By.U)";
+      return "Telkomsel / Operator Indonesia";
+    }
+    
+    // fungsi utama track nomor : paling akurat & beres
+    function trackPhoneNumber(rawInput) {
+      if (!rawInput || rawInput.trim() === "") {
+        return { error: true, msg: "❌ Masukkan nomor telepon yang ingin dilacak!" };
+      }
+      let cleaned = rawInput.trim().replace(/\s+/g, '');
+      // hapus karakter selain digit dan +
+      let pureNumber = cleaned.replace(/[^\d+]/g, '');
+      if (pureNumber === "") {
+        return { error: true, msg: "Format tidak valid, hanya angka dan + diperbolehkan." };
+      }
+      
+      // Step 1: deteksi apakah sudah pakai + atau tidak
+      let hasPlus = pureNumber.startsWith('+');
+      let numberForParse = pureNumber;
+      let countryCode = "";
+      let localNumber = "";
+      
+      // ekstrak kode negara dan nomor lokal
+      if (hasPlus) {
+        // contoh +62812345678 -> code 62, local 812345678
+        let temp = pureNumber.substring(1);
+        // cari kode negara terpanjang yang cocok (prioritas 3 digit dulu)
+        let foundCode = null;
+        let foundEntry = null;
+        // sort by length desc
+        let sortedCodes = [...prefixDatabase].sort((a,b) => (b.code.length - a.code.length));
+        for (let entry of sortedCodes) {
+          if (entry.code !== "other" && temp.startsWith(entry.code)) {
+            foundCode = entry.code;
+            foundEntry = entry;
+            break;
+          }
+        }
+        if (foundCode) {
+          countryCode = foundCode;
+          localNumber = temp.substring(foundCode.length);
+        } else {
+          // tidak dikenal tapi masih ada +, ambil kode 1-3 digit sebagai dugaan
+          let possibleCode = temp.substring(0, 3);
+          if (possibleCode.match(/\d{1,3}/)) {
+            countryCode = possibleCode;
+            localNumber = temp.substring(possibleCode.length);
+          } else {
+            countryCode = "unknown";
+            localNumber = temp;
+          }
+        }
+      } 
+      else {
+        // tanpa '+': cek diawali 0 atau tidak
+        if (pureNumber.startsWith("0")) {
+          // asumsikan indonesia +62
+          countryCode = "62";
+          localNumber = pureNumber.substring(1);
+        } 
+        else {
+          // kemungkinan nomor internasional tanpa +, cek apakah 10-15 digit dan bisa jadi kode negara didepan
+          // cari cocok dengan prefix database
+          let matched = false;
+          for (let entry of prefixDatabase) {
+            if (entry.code !== "other" && pureNumber.startsWith(entry.code)) {
+              countryCode = entry.code;
+              localNumber = pureNumber.substring(entry.code.length);
+              matched = true;
+              break;
+            }
+          }
+          if (!matched) {
+            // fallback: mungkin nomor lokal tanpa 0, kita treat sebagai indo?
+            if (pureNumber.length >= 8 && pureNumber.length <= 13) {
+              countryCode = "62";
+              localNumber = pureNumber;
+            } else {
+              return { error: true, msg: "Nomor tidak dikenali. Gunakan format internasional +62xxx atau 08xxx." };
+            }
+          }
+        }
+      }
+      
+      // cari entri negara berdasarkan countryCode
+      let countryEntry = prefixDatabase.find(e => e.code === countryCode);
+      if (!countryEntry && countryCode !== "unknown") {
+        countryEntry = prefixDatabase.find(e => e.code === "other");
+      } else if (!countryEntry) {
+        countryEntry = { country: "Tidak terdeteksi", flag: "❓", defaultOp: "Operator tidak diketahui" };
+      }
+      
+      let finalCountry = countryEntry.country;
+      let finalFlag = countryEntry.flag || "";
+      let operatorResult = "";
+      
+      // specific detection INDONESIA
+      if (countryCode === "62" || (pureNumber.startsWith("0") && !hasPlus)) {
+        let tempLocal = localNumber;
+        if (!tempLocal && pureNumber.startsWith("0")) tempLocal = pureNumber.substring(1);
+        if (!tempLocal && pureNumber.length > 2) tempLocal = pureNumber;
+        operatorResult = getDetailedIndonesianOperator(tempLocal || pureNumber);
+      } 
+      else if (countryEntry && countryEntry.defaultOp) {
+        // Untuk operator luar negeri, kita bisa mapping khusus berdasarkan prefix lokal (simple)
+        if (countryCode === "1") {
+          if (localNumber && localNumber.length >= 3) {
+            let area = localNumber.substring(0,3);
+            if (area === "212" || area === "646" || area === "917") operatorResult = "Verizon / AT&T (NYC)";
+            else if (area === "310" || area === "424") operatorResult = "T-Mobile / Sprint (LA)";
+            else operatorResult = "AT&T / Verizon / T-Mobile";
+          } else operatorResult = countryEntry.defaultOp;
+        } 
+        else if (countryCode === "44") {
+          if (localNumber && (localNumber.startsWith("7"))) operatorResult = "EE / O2 / Vodafone UK";
+          else operatorResult = "BT / Virgin / Three";
+        } 
+        else if (countryCode === "91") {
+          if (localNumber && (localNumber.startsWith("6") || localNumber.startsWith("7") || localNumber.startsWith("8") || localNumber.startsWith("9"))) {
+            if (localNumber.startsWith("7")) operatorResult = "Jio";
+            else if (localNumber.startsWith("8")) operatorResult = "Airtel";
+            else operatorResult = "Vi / BSNL";
+          } else operatorResult = "Jio / Airtel / Vi";
+        }
+        else {
+          operatorResult = countryEntry.defaultOp;
+        }
+      }
+      else {
+        operatorResult = "Provider tidak terdeteksi secara spesifik";
+      }
+      
+      // tambahan validasi tipe nomor (mobile / fixed)
+      let tipe = "📱 Mobile (seluler)";
+      if (countryCode === "1" && localNumber && localNumber.length === 10 && !localNumber.match(/^[2-9]/)) tipe = "🏢 Fixed-line / Non-mobile";
+      else if (countryCode === "62" && localNumber && (localNumber.startsWith("2") || localNumber.startsWith("3") || localNumber.startsWith("4"))) tipe = "🏢 Nomor Rumah / Kantor";
+      else if (localNumber && (localNumber.length < 8)) tipe = "⚠️ Nomor pendek (mungkin khusus)";
+      
+      let validStatus = `✅ Valid - ${tipe}`;
+      if (!localNumber || localNumber.length < 5) validStatus = "⚠️ Nomor terlalu pendek, periksa kembali";
+      
+      // bentuk display nomor cantik
+      let displayNumberFormatted = pureNum
